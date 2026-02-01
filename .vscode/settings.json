@@ -1,0 +1,5 @@
+{
+    "rust-analyzer.cargo.targetDir": "target",
+    "rust-analyzer.checkOnSave.command": "clippy",
+    "rust-analyzer.procMacro.enable": true
+}
