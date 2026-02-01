@@ -10,3 +10,15 @@ services:
       MARIADB_USER: app
       MARIADB_PASSWORD: apppass
       TZ: Asia/Tokyo
+
+  stock:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: my-rust-app:latest
+    container_name: my-rust-app
+    volumes:
+      - .:/usr/src/myapp:cached
+    ports:
+      - "8080:8080" # expose if your Rust app listens on a port
+    command: ["./myapp"] # optional override, already in Dockerfile
