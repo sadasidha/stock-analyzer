@@ -1,18 +1,23 @@
-use askama::Template;
-use rocket::{get, launch, response::Redirect, routes};
-
 mod utils;
 
+use askama::Template;
+use rocket::response::content::RawHtml;
+
+#[macro_use]
+extern crate rocket;
+
 #[derive(Template)]
-#[template(path = "index.html")]  // relative to templates/ folder
-struct IndexTemplate {}
+#[template(path = "index.html")]
+struct IndexTemplate;
 
 #[get("/")]
-pub fn index() {
-    Redirect::to("/index.html");
+fn index() -> RawHtml<String> {
+    let html = IndexTemplate.render().unwrap();
+    RawHtml(html)
 }
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![index])
+    rocket::build()
+        .mount("/", routes![index])
 }
