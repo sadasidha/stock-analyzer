@@ -1,9 +1,21 @@
-<!DOCTYPE>
-<html>
-    <body>
-        <form action="/pull" method="get">
-            Pull Data <input type="date"> <input type="submit">
-        </form>
-    </body>
-</html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Calendar Picker</title>
+<link rel="stylesheet" href="/static/css/calendar.css">
+<script src="/static/js/calendar.js"></script>
+</head>
+<body>
 
+<h2>カレンダー ピッカー</h2>
+<input id="date" size="20">
+
+<script>
+    const out = document.querySelector("#date");
+
+    new DatePicker(out).renderCalendar();
+</script>
+
+</body>
+</html>

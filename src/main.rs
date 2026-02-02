@@ -1,7 +1,9 @@
 mod utils;
+mod ctrls;
 
 use askama::Template;
-use rocket::response::content::RawHtml;
+use rocket::{fs::{FileServer, relative}, response::content::RawHtml};
+use ctrls::pull;
 
 #[macro_use]
 extern crate rocket;
@@ -20,4 +22,6 @@ fn index() -> RawHtml<String> {
 fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index])
+        .mount("/", pull::mount())
+        .mount("/static", FileServer::from(relative!("static")))
 }

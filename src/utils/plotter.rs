@@ -1,8 +1,8 @@
+use csv::ReaderBuilder;
+use glob::glob;
 use plotters::prelude::*;
 use std::error::Error;
 use std::fs::File;
-use glob::glob;
-use csv::ReaderBuilder;
 
 fn plot_em() -> Result<(), Box<dyn Error>> {
     let csv_folder = "/mnt/c/Users/johny/stock/data/*.csv";
@@ -30,7 +30,9 @@ fn plot_em() -> Result<(), Box<dyn Error>> {
             let first_cell = record.get(0).unwrap_or("").trim_matches('"');
 
             // Detect date line
-            if let Some(caps) = regex::Regex::new(r"(\d{4})年(\d{1,2})月(\d{1,2})日")?.captures(first_cell) {
+            if let Some(caps) =
+                regex::Regex::new(r"(\d{4})年(\d{1,2})月(\d{1,2})日")?.captures(first_cell)
+            {
                 let year: i32 = caps[1].parse()?;
                 let month: u32 = caps[2].parse()?;
                 let day: u32 = caps[3].parse()?;
@@ -75,14 +77,19 @@ fn plot_em() -> Result<(), Box<dyn Error>> {
     let root = BitMapBackend::new(output_png, (1600, 900)).into_drawing_area();
     root.fill(&WHITE)?;
 
-    let dates: Vec<chrono::NaiveDate> = stock_map.values().flat_map(|v| v.iter().map(|(d, _)| *d)).collect();
+    let dates: Vec<chrono::NaiveDate> = stock_map
+        .values()
+        .flat_map(|v| v.iter().map(|(d, _)| *d))
+        .collect();
     let min_date = *dates.iter().min().unwrap();
     let max_date = *dates.iter().max().unwrap();
 
-    let min_price = stock_map.values()
+    let min_price = stock_map
+        .values()
         .flat_map(|v| v.iter().map(|(_, p)| *p))
         .fold(f64::INFINITY, f64::min);
-    let max_price = stock_map.values()
+    let max_price = stock_map
+        .values()
         .flat_map(|v| v.iter().map(|(_, p)| *p))
         .fold(f64::NEG_INFINITY, f64::max);
 
@@ -93,7 +100,8 @@ fn plot_em() -> Result<(), Box<dyn Error>> {
         .y_label_area_size(80)
         .build_cartesian_2d(min_date..max_date, min_price..max_price)?;
 
-    chart.configure_mesh()
+    chart
+        .configure_mesh()
         .x_labels(10)
         .y_labels(10)
         .x_label_formatter(&|d| format!("{}", d.format("%Y-%m-%d")))
@@ -104,13 +112,16 @@ fn plot_em() -> Result<(), Box<dyn Error>> {
     let colors = &[&RED, &BLUE, &GREEN, &CYAN, &MAGENTA, &BLACK, &YELLOW];
     for (i, (stock, data)) in stock_map.iter().enumerate() {
         let color = colors[i % colors.len()];
-        chart.draw_series(LineSeries::new(
-            data.clone(),
-            color.stroke_width(2),
-        ))?.label(stock).legend(move |(x,y)| PathElement::new(vec![(x,y),(x+20,y)], color.stroke_width(2)));
+        chart
+            .draw_series(LineSeries::new(data.clone(), color.stroke_width(2)))?
+            .label(stock)
+            .legend(move |(x, y)| {
+                PathElement::new(vec![(x, y), (x + 20, y)], color.stroke_width(2))
+            });
     }
 
-    chart.configure_series_labels()
+    chart
+        .configure_series_labels()
         .background_style(&WHITE.mix(0.8))
         .border_style(&BLACK)
         .draw()?;
