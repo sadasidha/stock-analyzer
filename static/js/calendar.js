@@ -1,13 +1,82 @@
+
 class DatePicker {
+    hovering=false;
     dateDivs=[];
-    constructor(out) {
+    styleId="";
+    update_style() {
+        let styleWindow = document.getElementById(this.styleId);
+        if(styleWindow==null) {
+            styleWindow = document.createElement("style");
+            styleWindow.innerHTML = `
+                .picker {
+                    width: 250px;
+                    border: 1px solid #ccc;
+                    padding: 10px;
+                    user-select: none;
+                    background-color: #F8F8F8;
+                }
+
+                .picker div {
+                text-align: center;
+                    margin-bottom: 5px;
+                }
+
+                .picker button {
+                    cursor: pointer;
+                }
+
+                .grid {
+                    display: grid;
+                    grid-template-columns: repeat(7, 1fr);
+                    gap: 5px;
+                }
+
+                .grid div {
+                    padding: 5px 0;
+                    cursor: pointer;
+                    border-radius: 3px;
+                }
+                .grid div:hover {
+                    background-color: #ddd;
+                }
+
+                .weekdays {
+                    display: grid;
+                    grid-template-columns: repeat(7, 1fr);
+                    font-weight: bold;
+                }
+                .today {
+                    background-color: blue;
+                    color: white;
+                }
+                .selected {
+                    background-color: #748444;
+                    color: white;
+                }
+            `
+        }
+        document.head.appendChild(styleWindow);
+    }
+    constructor(target, styleid) {
+        if(typeof styleid != "string") {
+            this.styleId="calendar_style";
+        } else {
+            this.styleId=styleid;
+        }
+        this.update_style();
         this.picker = document.createElement("div");
         this.picker.className = "picker"
+        this.picker.addEventListener("mouseenter", ()=>{
+            this.hovering = true;
+        });
+        this.picker.addEventListener("mouseleave", ()=>{
+            this.hovering = false;
+        });
         document.body.append(this.picker);
         this.picker.style.display = "none";
         this.picker.style.position = "absolute";
 
-        this.out = out;
+        this.target = target;
         let date = this._get_value();
         this.today = new Date();
         this.date = date ? new Date(date) : this.today;;
@@ -19,19 +88,32 @@ class DatePicker {
         this.nextYear = this.nextYear.bind(this);
         this._onFocus = this._onFocus.bind(this);
         this._onBlur = this._onBlur.bind(this);
-        this.out.addEventListener("focus", this._onFocus);
-        this.out.addEventListener("blur", this._onBlur);
+        this.target.addEventListener("focus", this._onFocus);
+        this.target.addEventListener("blur", this._onBlur);
     }
 
     _onFocus() {
         this.picker.style.display = "";
-        const rect = this.out.getBoundingClientRect();
+        const rect = this.target.getBoundingClientRect();
         this.picker.style.left = rect.left + "px";
         this.picker.style.top = (rect.bottom + 2) + "px";
+        this.date = this._getDate(this.target.value);
+        this.renderCalendar();
+    }
+
+    _getDate(input) {
+        if (!input) {
+            return new Date(); // today;
+        }
+        const [_, y, m, d] = input.match(/(\d{4})年(\d{2})月(\d{2})日/);
+        const date = new Date(Number(y), Number(m) - 1, Number(d));
+        return date;
     }
 
     _onBlur() {
-        this.picker.style.display = "none";
+        if(!this.hovering){
+            this.picker.style.display = "none";
+        }
     }
 
     _renderWeek(parent, arr, clsName) {
@@ -53,18 +135,18 @@ class DatePicker {
         const header = document.createElement("div");
         const prevYearBtn = document.createElement("button");
         prevYearBtn.textContent = "◀◀";
-        prevYearBtn.onclick = this.prevYear;
+        prevYearBtn.addEventListener("click", this.prevYear);
         const prevBtn = document.createElement("button");
         prevBtn.textContent = "◀";
-        prevBtn.onclick = this.prev;
+        prevBtn.addEventListener("click", this.prev);
 
         const nextBtn = document.createElement("button");
         nextBtn.textContent = "▶";
-        nextBtn.onclick = this.next;
+        nextBtn.addEventListener("click", this.next);
 
         const nextYearBtn = document.createElement("button");
         nextYearBtn.textContent = "▶▶";
-        nextYearBtn.onclick = this.nextYear;
+        nextYearBtn.addEventListener("click", this.nextYear);
 
 
         const title = document.createElement("strong");
@@ -98,28 +180,30 @@ class DatePicker {
             const cell = document.createElement("div");
             cell.textContent = d;
             cell.style.cursor = "pointer";
-            cell.onclick = () => this.select(y, m, d);
+            cell.addEventListener("click", ((y, m, d) => {
+                return ()=>{
+                    this.picker.style.display="none";
+                    this.select(y, m, d);
+                }
+            }) (y, m, d));
             grid.appendChild(cell);
         }
-
         this.picker.appendChild(grid);
     }
 
     select(y, m, d) {
-        if(this.out instanceof HTMLInputElement) {
-            this.out.value = `${y}年${String(m + 1).padStart(2,"0")}月${String(d).padStart(2,"0")}日`;
-            console.log("wef");
+        if(this.target instanceof HTMLInputElement) {
+            this.target.value = `${y}年${String(m + 1).padStart(2,"0")}月${String(d).padStart(2,"0")}日`;
         } else {
-            this.out.innerText = `${y}年${String(m + 1).padStart(2,"0")}月${String(d).padStart(2,"0")}日`;
-            console.log("wtf");
+            this.target.innerText = `${y}年${String(m + 1).padStart(2,"0")}月${String(d).padStart(2,"0")}日`;
         }
     }
 
     _get_value() {
-        if(this.out instanceof HTMLInputElement) {
-            return this.out.value;
+        if(this.target instanceof HTMLInputElement) {
+            return this.target.value;
         } else {
-            this.out.innerText
+            this.target.innerText
         }
     }
 

@@ -5,7 +5,7 @@ FROM rust:1.91-slim AS builder
 WORKDIR /app
 
 # Copy Cargo.toml and Cargo.lock first (cache deps)
-COPY . ./
+COPY Cargo.* ./
 
 
 # Install system dependencies
