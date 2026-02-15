@@ -1,20 +1,16 @@
 use rocket::Route;
 
 use crate::utils::softhmpo_url::SofthmpUrl;
+use tracing::info;
 
 
 #[get("/pull?<date>")]
-pub async fn pull(date: String) -> String {
-    let date = format_date(date);
-    println!("................................{date}");
-    if date.is_empty() {
-        return date;
-    }
-    println!("................................{date}");
-    SofthmpUrl::get_stream(&date).await.unwrap_or("".to_string())
+pub async fn pull(date: String) -> Result<String, String> {
+    let date = format_date(date)?;
+    SofthmpUrl::get_stream(&date).await
 }
 
-fn format_date(date: String) -> String {
+fn format_date(date: String) -> Result<String, String> {
     let mut d = "".to_string();
     let mut count = 0;
     for x in date.as_bytes() {
@@ -26,10 +22,10 @@ fn format_date(date: String) -> String {
             break;
         }
     }
-    if d.len()!=10 {
-        return "".to_string();
+    if d.len()!=8 {
+        return Err(format!("{}[{}]: failed to parse date", file!(), line!()));
     }
-    d
+    Ok(d)
 }
 
 

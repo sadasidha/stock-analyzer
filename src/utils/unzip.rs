@@ -6,33 +6,33 @@ use zip::ZipArchive;
 pub struct UnzipU8Stream;
 
 impl UnzipU8Stream {
-    pub fn unzip_downloaded_stream(zip_bytes: &[u8]) -> Option<String> {
+    pub fn unzip_downloaded_stream(zip_bytes: &[u8]) -> Result<String, String> {
         let reader = Cursor::new(zip_bytes);
         let mut archive = match ZipArchive::new(reader) {
             Ok(a) => a,
             Err(_) => {
-                return None;
+                return Err(format!("{}[{}]: no data to process", file!(), line!()));
             }
         };
 
         if archive.len() != 1 {
-            return None;
+            return Err(format!("{}[{}]: not enought data", file!(), line!()));
         }
 
         let mut file = match archive.by_index(0) {
             Ok(r) => r,
-            Err(_) => return None,
+            Err(_) => return Err(format!("{}[{}]: unzip failed", file!(), line!())),
         };
 
         if file.is_dir() {
-            return None;
+            return Err(format!("{}[{}]: unexpected data structure", file!(), line!()));
         }
 
         let mut bytes = Vec::new();
         match file.read_to_end(&mut bytes) {
             Ok(_) => {}
             Err(_) => {
-                return None;
+                return Err(format!("{}[{}]: stream reading failed", file!(), line!()));
             }
         };
 
@@ -45,6 +45,6 @@ impl UnzipU8Stream {
             }
         };
 
-        Some(text)
+        Ok(text)
     }
 }
