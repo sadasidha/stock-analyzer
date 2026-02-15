@@ -110,6 +110,10 @@ class DatePicker {
         return date;
     }
 
+    getDate() {
+        return this.target.value.replace(/[年月]/g, "-").replace(/日/, "");
+    }
+
     _onBlur() {
         if(!this.hovering){
             this.picker.style.display = "none";
@@ -189,6 +193,7 @@ class DatePicker {
             grid.appendChild(cell);
         }
         this.picker.appendChild(grid);
+        return this;
     }
 
     select(y, m, d) {

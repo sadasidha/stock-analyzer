@@ -6,9 +6,11 @@ use crate::utils::softhmpo_url::SofthmpUrl;
 #[get("/pull?<date>")]
 pub async fn pull(date: String) -> String {
     let date = format_date(date);
+    println!("................................{date}");
     if date.is_empty() {
         return date;
     }
+    println!("................................{date}");
     SofthmpUrl::get_stream(&date).await.unwrap_or("".to_string())
 }
 

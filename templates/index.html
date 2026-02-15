@@ -3,18 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <title>Calendar Picker</title>
-<script src="/static/js/calendar.js"></script>
-</head>
-<body>
 
+<!-- global -->
+<script src="/static/js/calendar.js"></script>
+
+<!-- module -->
+<script type="module">
+  import { pullData } from "/static/js/pull.js";
+
+  const out = document.querySelector("#date");
+  const datePicker = new DatePicker(out, new Date().setDate(-1)).renderCalendar();
+
+  document
+    .getElementById("pullData")
+    .addEventListener("click", () => {
+      pullData(datePicker.getDate());
+    });
+</script>
+</head>
+
+<body>
 <h2>カレンダー ピッカー</h2>
 <input id="date" size="20">
-
-<script>
-    const out = document.querySelector("#date");
-
-    new DatePicker(out).renderCalendar();
-</script>
-
+<input type="button" value="Pull Data" id="pullData">
 </body>
 </html>
