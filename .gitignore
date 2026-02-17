@@ -1,1 +1,3 @@
 /target
+/mariadb_data
+general-log/

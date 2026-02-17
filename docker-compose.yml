@@ -3,13 +3,20 @@ services:
     image: mariadb:10.11
     container_name: mariadb
     restart: unless-stopped
-
     environment:
       MARIADB_ROOT_PASSWORD: 1
       MARIADB_DATABASE: appdb
       MARIADB_USER: app
       MARIADB_PASSWORD: apppass
       TZ: Asia/Tokyo
+    ports:
+      - "3306:3306"
+    command:
+      - --general-log=1
+      - --general-log-file=/var/lib/mysql/general.log
+    volumes:
+      - ./mariadb_data:/var/lib/mysql
+      - ./general-log:/var/lib/mysql
 
   stock:
     build:

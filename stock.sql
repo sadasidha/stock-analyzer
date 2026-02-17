@@ -2,7 +2,7 @@ CREATE TABLE trading_day (
     id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     trade_date DATE NOT NULL,
     UNIQUE KEY uk_trade_date (trade_date)
-) ENGINE=InnoDB D
+);
 
 CREATE TABLE stock_daily_price (
     id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -38,3 +38,12 @@ CREATE TABLE stock_daily_price (
         REFERENCES trading_day(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE stock_prediction (
+    `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `trading_day_id` BIGINT UNSIGNED NOT NULL,
+    `code` VARCHAR(10) NOT NULL,
+    `signal` TINYINT(1) NOT NULL,
+    `prob_up` DECIMAL NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

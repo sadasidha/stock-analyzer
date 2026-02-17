@@ -5,16 +5,23 @@ edition = "2024"
 
 [dependencies]
 askama = "0.15.4"
+bigdecimal = "0.4.10"
 chrono = "0.4.43"
+clap = { version = "4.5.59", features = ["derive"] }
 csv = "1.4.0"
 encoding_rs = "0.8.35"
 flate2 = "1.1.9"
 glob = "0.3.3"
+linfa = "0.8.1"
+linfa-logistic = "0.8.1"
+ndarray = "0.17.2"
 plotters = "0.3.7"
 regex = "1.12.3"
 reqwest = "0.13.2"
-rocket = { version = "0.5.1", features = ["json"] }
-sqlx = { version = "0.8.6", features = ["mysql", "runtime-tokio-rustls", "macros"] }
+#rocket = { version = "0.5.1", features = ["json"] }
+serde = { version = "1.0.228", features = ["derive"] }
+sqlx = { version = "0.8.6", features = ["mysql", "runtime-tokio-rustls", "macros", "chrono", "bigdecimal"] }
+tokio = { version = "1.49.0", features = ["full"] }
 tracing = "0.1.44"
-tracing-subscriber = {version =  "0.3.22",   features = ["env-filter", "fmt"] }
+tracing-subscriber = { version = "0.3.22", features = ["env-filter", "fmt"] }
 zip = "8.0.0"

@@ -2,5 +2,9 @@
     "rust-analyzer.checkOnSave": true,
     "rust-analyzer.check.command": "check",
     "rust-analyzer.cargo.targetDir": "target",
-    "rust-analyzer.procMacro.enable": true
+    "rust-analyzer.procMacro.enable": true,
+     "rust-analyzer.cargo.extraEnv": {
+      "DATABASE_URL": "mariadb://app:apppass@127.0.0.1:3306/appdb",
+      "RUST_LOG_STYLE": "never"
+    }
 }
